@@ -16,7 +16,7 @@ import onExit from 'signal-exit'
 const pTreeKill = promisify(treeKill)
 
 type CustomSpawnD = ReturnType<typeof spawn> & {
-  destroy?: () => Promise<void>
+  destroy: () => Promise<void>
 }
 
 function spawnd(command: string, options: Parameters<typeof spawn>[1]): CustomSpawnD {
@@ -28,16 +28,16 @@ function spawnd(command: string, options: Parameters<typeof spawn>[1]): CustomSp
     }
   }
 
-  const proc: CustomSpawnD = spawn(command, options)
+  const proc = spawn(command, options)
   proc.stderr.pipe(process.stderr)
   proc.on('exit', cleanExit)
   proc.on('error', () => cleanExit(1))
 
   const removeExitHandler = onExit(code => {
     cleanExit(typeof code === 'number' ? code : 1)
-  })
+  });
 
-  proc.destroy = async (): Promise<void> => {
+  (proc as CustomSpawnD).destroy = async (): Promise<void> => {
     removeExitHandler()
     proc.removeAllListeners('exit')
     proc.removeAllListeners('error')
@@ -45,7 +45,7 @@ function spawnd(command: string, options: Parameters<typeof spawn>[1]): CustomSp
       /* ignore error */
     })
   }
-  return proc
+  return proc as CustomSpawnD
 }
 
 interface JestProcessManagerOptions {
@@ -122,7 +122,7 @@ interface JestProcessManagerOptions {
    * }
    * ```
    */
-  port?: number;
+  port: number;
 
   /**
    * It defines the action to take if port is already used:
@@ -140,7 +140,7 @@ interface JestProcessManagerOptions {
    *   usedPortAction: 'kill',
    * }
    */
-  usedPortAction?: 'ask' | 'error' | 'ignore' | 'kill';
+  usedPortAction: 'ask' | 'error' | 'ignore' | 'kill';
 
   /**
    * jest-dev-server uses the wait-on npm package to wait for resources to become available before calling callback.
@@ -169,7 +169,7 @@ const DEFAULT_CONFIG: JestProcessManagerOptions = {
   options: {},
   launchTimeout: 5000,
   host: 'localhost',
-  port: null,
+  port: 3000,
   protocol: 'tcp',
   usedPortAction: 'ask',
   waitOnScheme: {},
@@ -186,7 +186,7 @@ export const ERROR_TIMEOUT = 'ERROR_TIMEOUT'
 export const ERROR_PORT_USED = 'ERROR_PORT_USED'
 export const ERROR_NO_COMMAND = 'ERROR_NO_COMMAND'
 export class JestDevServerError extends Error {
-  code: string
+  code?: string
   constructor(message: string, code?: string) {
     super(message)
     this.code = code
@@ -195,15 +195,17 @@ export class JestDevServerError extends Error {
 
 const servers: CustomSpawnD[] = []
 
-function logProcDetection(proc, port) {
+const logProcDetection = (procName: string, port: number) => {
   console.log(
     chalk.blue(
-      `🕵️  Detecting a process "${proc.name}" running on port "${port}"`,
+      `🕵️  Detecting a process "${procName}" running on port "${port}"`,
     ),
   )
 }
 
-async function killProc(proc): Promise<void> {
+type Unwrap<T> = T extends (...args: any) => Promise<infer U> ? U : T
+
+async function killProc(proc: Unwrap<typeof findProcess>[0]): Promise<void> {
   console.log(chalk.yellow(`Killing process ${proc.name}...`))
   await pTreeKill(proc.pid)
   console.log(chalk.green(`Successfully killed process ${proc.name}`))
@@ -227,7 +229,7 @@ function runServer(config: JestProcessManagerOptions, index: number) {
   if (config.debug) {
     // eslint-disable-next-line no-console
     console.log(chalk.magentaBright('\nJest dev-server output:'))
-    servers[index].stdout.pipe(serverLogPrefixer).pipe(process.stdout)
+    servers[index].stdout!.pipe(serverLogPrefixer).pipe(process.stdout)
   }
 }
 
@@ -235,6 +237,7 @@ async function outOfStin<T>(block: () => Promise<T>) {
   const { stdin } = process
   const listeners = stdin.listeners('data')
   const result = await block()
+  // @ts-ignore
   listeners.forEach(listener => stdin.on('data', listener))
   stdin.setRawMode(true)
   stdin.setEncoding('utf8')
@@ -244,7 +247,7 @@ async function outOfStin<T>(block: () => Promise<T>) {
 
 function getIsPortTaken(config: JestProcessManagerOptions) {
   let server: net.Server
-  const cleanupAndReturn = result =>
+  const cleanupAndReturn: (val: boolean) => void = result =>
     new Promise(resolve => server.once('close', () => resolve(result)).close())
   return new Promise((resolve, reject) => {
     server = net
@@ -285,7 +288,7 @@ async function setupJestServer(providedConfig: JestProcessManagerOptions, index:
         `Killing process listening to ${config.port}. On linux, this may require you to enter your password.`,
       )
       const [portProcess] = await findProcess('port', config.port)
-      logProcDetection(portProcess, config.port)
+      logProcDetection(portProcess.name, config.port)
       await killProc(portProcess)
     },
     async ask() {
@@ -300,7 +303,7 @@ async function setupJestServer(providedConfig: JestProcessManagerOptions, index:
       )
       if (answers.kill) {
         const [portProcess] = await findProcess('port', config.port)
-        logProcDetection(portProcess, config.port)
+        logProcDetection(portProcess.name, config.port)
         await killProc(portProcess)
       } else {
         process.exit(1)
