@@ -9,7 +9,7 @@ import { promisify } from 'util'
 import treeKill from 'tree-kill'
 import prompts from 'prompts'
 
-import { spawn, ChildProcess } from 'child_process'
+import { spawn, ChildProcess, SpawnOptions } from 'child_process'
 import exit from 'exit'
 import onExit from 'signal-exit'
 
@@ -19,7 +19,8 @@ type CustomSpawnD = ReturnType<typeof spawn> & {
   destroy: () => Promise<void>
 }
 
-function spawnd(command: string, options: Parameters<typeof spawn>[1]): CustomSpawnD {
+function spawnd(command: string, options: SpawnOptions): CustomSpawnD {
+  const proc = spawn(command, options)
   const cleanExit = (code = 1) => {
     if (proc && proc.pid) {
       treeKill(proc.pid, () => exit(code))
@@ -27,9 +28,9 @@ function spawnd(command: string, options: Parameters<typeof spawn>[1]): CustomSp
       exit(code)
     }
   }
-
-  const proc = spawn(command, options)
-  proc.stderr.pipe(process.stderr)
+  if (proc.stderr !== null) {
+    proc.stderr.pipe(process.stderr)
+  }
   proc.on('exit', cleanExit)
   proc.on('error', () => cleanExit(1))
 
@@ -161,10 +162,11 @@ interface JestProcessManagerOptions {
   /**
    * Options which will be passed down to the spawn of the process
    */
-  options?: Parameters<typeof spawn>[1]
+  options?: SpawnOptions
 }
 
 const DEFAULT_CONFIG: JestProcessManagerOptions = {
+  command: 'npm run start',
   debug: false,
   options: {},
   launchTimeout: 5000,
