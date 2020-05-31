@@ -1,0 +1,39 @@
+{
+  "name": "jest-process-manager",
+  "description": "Starts a server before your Jest tests and tears it down after.",
+  "version": "0.1.0",
+  "main": "lib/index.js",
+  "repository": "https://github.com/playwright-community/jest-process-manager",
+  "author": "Playwright Community",
+  "license": "MIT",
+  "keywords": [
+    "jest",
+    "jest-environment",
+    "server"
+  ],
+  "scripts": {
+    "prebuild": "rm -rf lib/",
+    "prepublishOnly": "yarn build",
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "chalk": "^4.0.0",
+    "cwd": "^0.10.0",
+    "exit": "^0.1.2",
+    "find-process": "^1.4.3",
+    "prompts": "^2.3.2",
+    "signal-exit": "^3.0.3",
+    "spawnd": "^4.4.0",
+    "tree-kill": "^1.2.2",
+    "wait-on": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/cwd": "^0.10.0",
+    "@types/exit": "^0.1.31",
+    "@types/prompts": "^2.0.8",
+    "@types/signal-exit": "^3.0.0",
+    "@types/wait-on": "^4.0.0",
+    "typescript": "^3.8.3"
+  }
+}
