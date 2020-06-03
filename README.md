@@ -1,5 +1,8 @@
 # jest-process-manager
 
+[![CI](https://github.com/playwright-community/jest-process-manager/workflows/CI/badge.svg)](https://github.com/playwright-community/jest-process-manager/actions)
+[![npm](https://img.shields.io/npm/v/jest-process-manager)](http://npmjs.com/package/jest-process-manager)
+
 Starts a server before your Jest tests and tears it down after.
 
 ## Why
@@ -223,10 +226,4 @@ module.exports = {
 
 ## License
 
-MIT
-
-[build-badge]: https://img.shields.io/travis/smooth-code/jest-puppeteer.svg?style=flat-square
-[build]: https://travis-ci.org/smooth-code/jest-puppeteer
-[version-badge]: https://img.shields.io/npm/v/jest-dev-server.svg?style=flat-square
-[package]: https://www.npmjs.com/package/jest-process-manager
-[license]: https://github.com/playwright-community/jest-process-manager/blob/master/LICENSE
+https://github.com/playwright-community/jest-process-manager/blob/master/LICENSE
