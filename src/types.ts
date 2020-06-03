@@ -81,6 +81,8 @@ export interface JestProcessManagerOptions {
      */
     port: number;
 
+    basePath?: string;
+
     /**
      * It defines the action to take if port is already used:
      * @default 'ask'
