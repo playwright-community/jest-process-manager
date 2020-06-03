@@ -52,12 +52,12 @@ function spawnd(command: string, options: SpawnOptions): CustomSpawnD {
 
 const serverLogPrefixer = new stream.Transform({
   transform(chunk, encoding, callback) {
-    this.push(chalk.magentaBright(`[Jest Dev server] ${chunk.toString()}`))
+    this.push(chalk.magentaBright(`[Jest Process Manager] ${chunk.toString()}`))
     callback()
   },
 })
 
-export class JestDevServerError extends Error {
+export class JestProcessManagerError extends Error {
   code?: string
   constructor(message: string, code?: string) {
     super(message)
@@ -85,7 +85,7 @@ async function killProc(proc: Unwrap<typeof findProcess>[0]): Promise<void> {
 
 function runServer(config: JestProcessManagerOptions, index: number) {
   if (!config.command) {
-    throw new JestDevServerError(
+    throw new JestProcessManagerError(
       'You must define a `command`',
       ERROR_NO_COMMAND,
     )
@@ -122,7 +122,7 @@ function getIsPortTaken(config: JestProcessManagerOptions) {
   return new Promise((resolve, reject) => {
     server = net
       .createServer()
-      .once('error', (err: JestDevServerError) =>
+      .once('error', (err: JestProcessManagerError) =>
         err.code === 'EADDRINUSE' ? resolve(cleanupAndReturn(true)) : reject(),
       )
       .once('listening', () => resolve(cleanupAndReturn(false)))
@@ -147,7 +147,7 @@ async function setupJestServer(providedConfig: JestProcessManagerOptions, index:
 
   const usedPortHandlers = {
     error() {
-      throw new JestDevServerError(
+      throw new JestProcessManagerError(
         `Port ${config.port} is in use`,
         ERROR_PORT_USED,
       )
@@ -187,7 +187,7 @@ async function setupJestServer(providedConfig: JestProcessManagerOptions, index:
     const availableActions = Object.keys(usedPortHandlers)
       .map(action => `\`${action}\``)
       .join(', ')
-    throw new JestDevServerError(
+    throw new JestProcessManagerError(
       `Invalid \`usedPortAction\`, only ${availableActions} are possible`,
     )
   }
@@ -221,7 +221,7 @@ async function setupJestServer(providedConfig: JestProcessManagerOptions, index:
     try {
       await waitOn(opts)
     } catch (err) {
-      throw new JestDevServerError(
+      throw new JestProcessManagerError(
           `Server has taken more than ${launchTimeout}ms to start.`,
           ERROR_TIMEOUT,
       )

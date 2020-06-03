@@ -102,7 +102,7 @@ export interface JestProcessManagerOptions {
     usedPortAction: 'ask' | 'error' | 'ignore' | 'kill';
 
     /**
-     * jest-dev-server uses the wait-on npm package to wait for resources to become available before calling callback.
+     * jest-process-manager uses the wait-on npm package to wait for resources to become available before calling callback.
      * @default {}
      *
      * ```js
