@@ -193,6 +193,7 @@ async function setupJestServer(providedConfig: JestProcessManagerOptions, index:
   }
 
   if (config.port) {
+    const { launchTimeout, protocol, host, port, basePath, waitOnScheme } = config
     const isPortTaken = await getIsPortTaken(config)
     if (isPortTaken) {
       await usedPortHandler()
@@ -204,18 +205,12 @@ async function setupJestServer(providedConfig: JestProcessManagerOptions, index:
     } else {
       runServer(config, index)
     }
-  } else {
-    runServer(config, index)
-  }
-
-  if (config.port) {
-    const { launchTimeout, protocol, host, port, waitOnScheme } = config
 
     let url = ''
     if (protocol === 'tcp' || protocol === 'socket') {
-      url = `${protocol}:${host}:${port}`
+      url = `${protocol}:${host}:${port}${basePath ? `/${basePath}` : ''}`
     } else {
-      url = `${protocol}://${host}:${port}`
+      url = `${protocol}://${host}:${port}${basePath ? `/${basePath}` : ''}`
     }
     const opts = {
       resources: [url],
@@ -227,11 +222,14 @@ async function setupJestServer(providedConfig: JestProcessManagerOptions, index:
       await waitOn(opts)
     } catch (err) {
       throw new JestDevServerError(
-        `Server has taken more than ${launchTimeout}ms to start.`,
-        ERROR_TIMEOUT,
+          `Server has taken more than ${launchTimeout}ms to start.`,
+          ERROR_TIMEOUT,
       )
     }
+  } else {
+    runServer(config, index)
   }
+
 }
 
 export function getServers(): ChildProcess[] {
