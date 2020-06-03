@@ -15,7 +15,8 @@
     "prebuild": "rm -rf lib/",
     "prepublishOnly": "yarn build",
     "build": "tsc",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "lint": "tsc --noEmit"
   },
   "dependencies": {
     "chalk": "^4.0.0",
