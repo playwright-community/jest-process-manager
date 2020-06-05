@@ -1,5 +1,7 @@
 # jest-process-manager
 
+**This project was created as [`jest-dev-server`](https://github.com/smooth-code/jest-puppeteer/tree/master/packages/jest-dev-server) package is not well maintained.
+
 [![CI](https://github.com/playwright-community/jest-process-manager/workflows/CI/badge.svg)](https://github.com/playwright-community/jest-process-manager/actions)
 [![npm](https://img.shields.io/npm/v/jest-process-manager)](http://npmjs.com/package/jest-process-manager)
 
@@ -170,6 +172,19 @@ If not provided, the server is assumed to immediately be running.
 module.exports = {
   command: 'npm run start --port 3000',
   port: 3000,
+}
+```
+
+### `basePath`
+
+Type: `string`
+
+Option for a basePath where server is running.
+
+```js
+module.exports = {
+  command: 'npm run start',
+  basePath: '/myservice',
 }
 ```
 
