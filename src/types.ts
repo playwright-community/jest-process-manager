@@ -81,6 +81,16 @@ export interface JestProcessManagerOptions {
      */
     port: number;
 
+    /**
+     * Option for a basePath where server is running
+     *
+     * ```js
+     * module.exports = {
+     *   command: 'npm run start',
+     *   basePath: '/myservice',
+     * }
+     * ```
+     */
     basePath?: string;
 
     /**
