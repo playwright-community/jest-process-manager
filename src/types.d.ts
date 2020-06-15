@@ -1,8 +1,9 @@
+/// <reference types="node" />
 import type { ChildProcess, SpawnOptions } from "child_process";
 import type { WaitOnOptions } from "wait-on";
 
 export interface CustomSpawnD extends ChildProcess {
-    destroy: () => Promise<void>
+    destroy: () => Promise<void>;
 }
 
 export interface JestProcessManagerOptions {
@@ -16,7 +17,6 @@ export interface JestProcessManagerOptions {
      * ```
      */
     command: string;
-
     /**
      * Log server output, useful if server is crashing at start.
      * @default false
@@ -28,7 +28,6 @@ export interface JestProcessManagerOptions {
      * ```
      */
     debug?: boolean;
-
     /**
      * How many milliseconds to wait for the spawned server to be available before giving up. Defaults to wait-port's default.
      * @default 5000
@@ -40,7 +39,6 @@ export interface JestProcessManagerOptions {
      * ```
      */
     launchTimeout?: number;
-
     /**
      * Host to wait for activity on before considering the server running. Must be used in conjunction with port.
      * @default 'localhost'
@@ -54,7 +52,6 @@ export interface JestProcessManagerOptions {
      * ```
      */
     host?: string;
-
     /**
      * To wait for an HTTP or TCP endpoint before considering the server running, include http or tcp as a protocol. Must be used in conjunction with port.
      * @default 'tcp'
@@ -67,7 +64,6 @@ export interface JestProcessManagerOptions {
      * ```
      */
     protocol?: 'https' | 'http' | 'tcp' | 'socket';
-
     /**
      * Port to wait for activity on before considering the server running. If not provided, the server is assumed to immediately be running.
      * @default null
@@ -80,7 +76,6 @@ export interface JestProcessManagerOptions {
      * ```
      */
     port: number;
-
     /**
      * Option for a basePath where server is running
      *
@@ -92,7 +87,6 @@ export interface JestProcessManagerOptions {
      * ```
      */
     basePath?: string;
-
     /**
      * It defines the action to take if port is already used:
      * @default 'ask'
@@ -110,7 +104,6 @@ export interface JestProcessManagerOptions {
      * }
      */
     usedPortAction: 'ask' | 'error' | 'ignore' | 'kill';
-
     /**
      * jest-process-manager uses the wait-on npm package to wait for resources to become available before calling callback.
      * @default {}
@@ -126,9 +119,21 @@ export interface JestProcessManagerOptions {
      * }
      */
     waitOnScheme?: Partial<WaitOnOptions>;
-
     /**
      * Options which will be passed down to the spawn of the process
      */
-    options?: SpawnOptions
+    options?: SpawnOptions;
 }
+
+export declare class JestProcessManagerError extends Error {
+    code?: string;
+    constructor(message: string, code?: string);
+}
+export declare function setup(providedConfigs: JestProcessManagerOptions | JestProcessManagerOptions[]): Promise<void>;
+export declare function getServers(): ChildProcess[];
+export declare function teardown(): Promise<void>;
+
+export declare const ERROR_TIMEOUT = "ERROR_TIMEOUT";
+export declare const ERROR_PORT_USED = "ERROR_PORT_USED";
+export declare const ERROR_NO_COMMAND = "ERROR_NO_COMMAND";
+

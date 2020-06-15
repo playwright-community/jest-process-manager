@@ -3,7 +3,7 @@
   "description": "Starts a server before your Jest tests and tears it down after.",
   "version": "0.2.0",
   "main": "lib/index.js",
-  "types": "./types/global.d.ts",
+  "types": "./src/global.d.ts",
   "repository": "https://github.com/playwright-community/jest-process-manager",
   "author": "Playwright Community",
   "license": "MIT",

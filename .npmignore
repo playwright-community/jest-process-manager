@@ -1,3 +1,3 @@
 /*
 !/lib/*.js
-!types/
+!/src/types.d.ts
