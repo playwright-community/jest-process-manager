@@ -93,9 +93,12 @@ function runServer(config: JestProcessManagerOptions, index: number) {
 
   servers[index] = spawnd(config.command, {
     shell: true,
-    env: process.env,
     cwd: cwd(),
     ...config.options,
+    env: {
+      ...process.env,
+      ...(config.options?.env ? config.options.env : {})
+    }
   })
 
   if (config.debug) {
@@ -222,8 +225,8 @@ async function setupJestServer(providedConfig: JestProcessManagerOptions, index:
       await waitOn(opts)
     } catch (err) {
       throw new JestProcessManagerError(
-          `Server has taken more than ${launchTimeout}ms to start.`,
-          ERROR_TIMEOUT,
+        `Server has taken more than ${launchTimeout}ms to start.`,
+        ERROR_TIMEOUT,
       )
     }
   } else {
