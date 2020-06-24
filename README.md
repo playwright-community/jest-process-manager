@@ -235,6 +235,32 @@ module.exports = {
 }
 ```
 
+### `options`
+
+Options which will be passed down to the [spawn](https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options) of the process. For example environment variables:
+
+```js
+// global-setup.js
+const { setup: setupDevServer, getServers } = require('jest-process-manager')
+
+module.exports = async function globalSetup() {
+  await setupDevServer({
+    command: `node config/start.js --port=3000`,
+    launchTimeout: 50000,
+    port: 3000,
+    options: {
+      env: {
+        "FOO": "bar",
+      }
+    }
+  })
+  getServers.then(servers => {
+    // You can get to the servers and do whatever you want
+  })
+  // Your global setup
+}
+```
+
 ## Troubleshooting
 
 - If using `port` makes the terminal to ask for root password although the port is valid and accessible then use `usePortAction: 'ignore'`.
