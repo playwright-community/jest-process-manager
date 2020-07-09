@@ -133,6 +133,16 @@ function getIsPortTaken(config: JestProcessManagerOptions) {
   })
 }
 
+const basePathUrlPostfix = (basePath?: string): string => {
+  if (basePath) {
+    if (basePath.includes('/')) {
+      return basePath
+    }
+    return `/${basePath}`
+  }
+  return ''
+}
+
 export async function setup(providedConfigs: JestProcessManagerOptions | JestProcessManagerOptions[]): Promise<void> {
   // Compatible with older versions
   const configs = Array.isArray(providedConfigs)
@@ -209,11 +219,13 @@ async function setupJestServer(providedConfig: JestProcessManagerOptions, index:
       runServer(config, index)
     }
 
+    const urlPostfix = basePathUrlPostfix(basePath)
+
     let url = ''
     if (protocol === 'tcp' || protocol === 'socket') {
-      url = `${protocol}:${host}:${port}${basePath ? `/${basePath}` : ''}`
+      url = `${protocol}:${host}:${port}${urlPostfix}`
     } else {
-      url = `${protocol}://${host}:${port}${basePath ? `/${basePath}` : ''}`
+      url = `${protocol}://${host}:${port}${urlPostfix}`
     }
     const opts = {
       resources: [url],
