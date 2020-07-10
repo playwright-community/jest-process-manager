@@ -135,7 +135,7 @@ function getIsPortTaken(config: JestProcessManagerOptions) {
 
 const basePathUrlPostfix = (basePath?: string): string => {
   if (basePath) {
-    if (basePath.includes('/')) {
+    if (basePath.startsWith('/')) {
       return basePath
     }
     return `/${basePath}`
