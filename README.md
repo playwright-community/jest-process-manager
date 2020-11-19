@@ -148,10 +148,11 @@ module.exports = {
 
 ### `protocol`
 
-Type: `string`, (`https`, `http`, `tcp`, `socket`) default to `tcp`.
+Type: (`https`, `http`, `http-get`, `https-get`, `tcp`, `socket`) default to `tcp`.
 
 To wait for an HTTP or TCP endpoint before considering the server running, include `http` or `tcp` as a protocol.
 Must be used in conjunction with `port`.
+This give you ability to define resource prefix for [`wait-on`](https://github.com/jeffbski/wait-on) package.
 
 ```js
 module.exports = {
