@@ -118,19 +118,34 @@ async function outOfStin<T>(block: () => Promise<T>) {
   return result
 }
 
-function getIsPortTaken(config: JestProcessManagerOptions) {
-  let server: net.Server
-  const cleanupAndReturn: (val: boolean) => void = result =>
-    new Promise(resolve => server.once('close', () => resolve(result)).close())
-  return new Promise((resolve, reject) => {
-    server = net
-      .createServer()
-      .once('error', (err: JestProcessManagerError) =>
-        err.code === 'EADDRINUSE' ? resolve(cleanupAndReturn(true)) : reject(),
-      )
-      .once('listening', () => resolve(cleanupAndReturn(false)))
-      .listen(config.port, config.host)
-  })
+async function getIsPortTaken(config: JestProcessManagerOptions) {
+  // TODO Make it configurable through config?
+  const timeout = 1000
+  const {port, host} = config
+  const promise = new Promise(((resolve, reject) => {
+    const socket = new net.Socket()
+
+    const onError = () => {
+      socket.destroy()
+      reject()
+    };
+
+    socket.setTimeout(timeout);
+    socket.once('error', onError)
+    socket.once('timeout', onError)
+
+    socket.connect(port, host as string, () => {
+      socket.end()
+      resolve()
+    })
+  }))
+
+  try {
+    await promise
+    return true
+  } catch (_) {
+    return false
+  }
 }
 
 const basePathUrlPostfix = (basePath?: string): string => {
