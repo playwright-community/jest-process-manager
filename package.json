@@ -1,7 +1,7 @@
 {
   "name": "jest-process-manager",
   "description": "Starts a server before your Jest tests and tears it down after.",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "main": "lib/index.js",
   "types": "src/types.d.ts",
   "repository": "https://github.com/playwright-community/jest-process-manager",
