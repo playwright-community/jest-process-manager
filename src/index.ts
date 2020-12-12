@@ -23,7 +23,7 @@ const pTreeKill = promisify(treeKill)
 function spawnd(command: string, options: SpawnOptions): CustomSpawnD {
   const proc = <CustomSpawnD>spawn(command, options)
   const cleanExit = (code = 1) => {
-    if (proc && proc.pid) {
+    if (proc?.pid) {
       treeKill(proc.pid, () => exit(code))
     } else {
       exit(code)
@@ -136,7 +136,7 @@ async function getIsPortTaken(config: JestProcessManagerOptions) {
 
     socket.connect(port, host as string, () => {
       socket.end()
-      resolve()
+      resolve(true)
     })
   }))
 
@@ -150,10 +150,7 @@ async function getIsPortTaken(config: JestProcessManagerOptions) {
 
 const basePathUrlPostfix = (basePath?: string): string => {
   if (basePath) {
-    if (basePath.startsWith('/')) {
-      return basePath
-    }
-    return `/${basePath}`
+    return basePath.startsWith('/') ? basePath : `/${basePath}`
   }
   return ''
 }
@@ -236,11 +233,9 @@ async function setupJestServer(providedConfig: JestProcessManagerOptions, index:
 
     const urlPostfix = basePathUrlPostfix(basePath)
 
-    let url = ''
+    let url = `${protocol}://${host}:${port}${urlPostfix}`
     if (protocol === 'tcp' || protocol === 'socket') {
       url = `${protocol}:${host}:${port}${urlPostfix}`
-    } else {
-      url = `${protocol}://${host}:${port}${urlPostfix}`
     }
     const opts = {
       resources: [url],
