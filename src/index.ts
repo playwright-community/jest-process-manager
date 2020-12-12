@@ -50,7 +50,7 @@ function spawnd(command: string, options: SpawnOptions): CustomSpawnD {
   return proc as CustomSpawnD
 }
 
-const serverLogPrefixer = new stream.Transform({
+const createServerLogPrefixer = () => new stream.Transform({
   transform(chunk, encoding, callback) {
     this.push(chalk.magentaBright(`[Jest Process Manager] ${chunk.toString()}`))
     callback()
@@ -103,7 +103,7 @@ function runServer(config: JestProcessManagerOptions, index: number) {
 
   if (config.debug) {
     console.log(chalk.magentaBright('\nJest dev-server output:'))
-    servers[index].stdout!.pipe(serverLogPrefixer).pipe(process.stdout)
+    servers[index].stdout!.pipe(createServerLogPrefixer()).pipe(process.stdout)
   }
 }
 
