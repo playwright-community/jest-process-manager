@@ -246,6 +246,10 @@ async function setupJestServer(providedConfig: JestProcessManagerOptions, index:
     try {
       await waitOn(opts)
     } catch (err) {
+      const [portProcess] = await findProcess('port', config.port)
+      if (portProcess) {
+        await killProc(portProcess)
+      }
       throw new JestProcessManagerError(
         `Server has taken more than ${launchTimeout}ms to start.`,
         ERROR_TIMEOUT,
