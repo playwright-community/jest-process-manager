@@ -1,6 +1,6 @@
 /// <reference types="node" />
-import type { ChildProcess, SpawnOptions } from "child_process";
-import type { WaitOnOptions } from "wait-on";
+import { ChildProcess, SpawnOptions } from "child_process";
+import { WaitOnOptions } from "wait-on";
 
 export interface CustomSpawnD extends ChildProcess {
     destroy: () => Promise<void>;
