@@ -63,7 +63,7 @@ export interface JestProcessManagerOptions {
      * }
      * ```
      */
-    protocol?: 'https' | 'http' | 'tcp' | 'socket';
+    protocol?: 'https' | 'https-get' | 'http' | 'http-get' | 'tcp' | 'socket';
     /**
      * Port to wait for activity on before considering the server running. If not provided, the server is assumed to immediately be running.
      * @default null
@@ -136,4 +136,3 @@ export declare function teardown(): Promise<void>;
 export declare const ERROR_TIMEOUT = "ERROR_TIMEOUT";
 export declare const ERROR_PORT_USED = "ERROR_PORT_USED";
 export declare const ERROR_NO_COMMAND = "ERROR_NO_COMMAND";
-
