@@ -28,7 +28,7 @@
     "signal-exit": "^3.0.3",
     "spawnd": "^4.4.0",
     "tree-kill": "^1.2.2",
-    "wait-on": "^5.2.0",
+    "wait-on": "^5.2.1",
     "@types/wait-on": "^5.2.0"
   },
   "devDependencies": {
