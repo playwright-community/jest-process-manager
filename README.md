@@ -164,7 +164,7 @@ module.exports = {
 
 ### `port`
 
-Type: `number`, default to `null`.
+Type: `number`, default to `3000`.
 
 Port to wait for activity on before considering the server running.
 If not provided, the server is assumed to immediately be running.
