@@ -131,7 +131,7 @@ export declare class JestProcessManagerError extends Error {
 }
 export declare function setup(providedConfigs: JestProcessManagerOptions | JestProcessManagerOptions[]): Promise<void>;
 export declare function getServers(): ChildProcess[];
-export declare function teardown(): Promise<void>;
+export declare function teardown(command?: string): Promise<void>;
 
 export declare const ERROR_TIMEOUT = "ERROR_TIMEOUT";
 export declare const ERROR_PORT_USED = "ERROR_PORT_USED";

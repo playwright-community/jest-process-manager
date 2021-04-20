@@ -266,7 +266,7 @@ export function getServers(): ChildProcess[] {
   return servers
 }
 
-export async function teardown(command: string): Promise<void> {
+export async function teardown(command?: string): Promise<void> {
   if (servers.length) {
     await Promise.all(servers.map(server => server.destroy()))
   }
