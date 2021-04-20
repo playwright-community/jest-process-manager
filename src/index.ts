@@ -9,7 +9,7 @@ import { promisify } from 'util'
 import treeKill from 'tree-kill'
 import prompts from 'prompts'
 
-import { spawn } from 'child_process'
+import { spawn, exec } from 'child_process'
 import exit from 'exit'
 import onExit from 'signal-exit'
 
@@ -19,6 +19,7 @@ import type { CustomSpawnD, JestProcessManagerOptions } from './types';
 import { DEFAULT_CONFIG, ERROR_NO_COMMAND, ERROR_PORT_USED, ERROR_TIMEOUT } from './constants';
 
 const pTreeKill = promisify(treeKill)
+const pExec = promisify(exec);
 
 function spawnd(command: string, options: SpawnOptions): CustomSpawnD {
   const proc = <CustomSpawnD>spawn(command, options)
@@ -50,7 +51,7 @@ function spawnd(command: string, options: SpawnOptions): CustomSpawnD {
   return proc as CustomSpawnD
 }
 
-const createServerLogPrefixer = () => new stream.Transform({
+const createServerLogPrefix = () => new stream.Transform({
   transform(chunk, encoding, callback) {
     this.push(chalk.magentaBright(`[Jest Process Manager] ${chunk.toString()}`))
     callback()
@@ -103,7 +104,7 @@ function runServer(config: JestProcessManagerOptions, index: number) {
 
   if (config.debug) {
     console.log(chalk.magentaBright('\nJest dev-server output:'))
-    servers[index].stdout!.pipe(createServerLogPrefixer()).pipe(process.stdout)
+    servers[index].stdout!.pipe(createServerLogPrefix()).pipe(process.stdout)
   }
 }
 
@@ -265,8 +266,15 @@ export function getServers(): ChildProcess[] {
   return servers
 }
 
-export async function teardown(): Promise<void> {
+export async function teardown(command: string): Promise<void> {
   if (servers.length) {
     await Promise.all(servers.map(server => server.destroy()))
+  }
+  if (command) {
+    try {
+      await pExec(command);
+    } catch (e) {
+      console.error(e);
+    }
   }
 }
